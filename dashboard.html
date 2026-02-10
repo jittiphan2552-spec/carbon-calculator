@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สถิติการใช้งาน | Carbon Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-leaf"></i>
+                <span>Carbon Calculator</span>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">หน้าแรก</a></li>
+                <li><a href="dashboard.html" class="active">สถิติ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="calculator-section">
+        <div class="container">
+            <h2 class="section-title">📊 สถิติการใช้งาน</h2>
+            
+            <div class="stats-overview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <h3 id="totalUsers">0</h3>
+                    <p>ผู้ใช้งานทั้งหมด</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">☁️</div>
+                    <h3 id="averageCO2">0</h3>
+                    <p>CO₂ เฉลี่ย (kg/ปี)</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌱</div>
+                    <h3 id="belowAveragePercent">0%</h3>
+                    <p>ต่ำกว่าค่าเฉลี่ย</p>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">📈 กราฟ CO₂ ของผู้ใช้</h3>
+                <canvas id="co2Chart"></canvas>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 1.5rem;">🏆 ผู้ใช้ที่มี CO₂ ต่ำที่สุด (Top 10)</h3>
+                <div id="leaderboard"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Carbon Calculator | โปรเจคเพื่อการศึกษา</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        async function loadDashboard() {
+            if (!db) {
+                document.querySelector('.container').innerHTML = '<p style="text-align:center; padding:3rem;">กรุณาตั้งค่า Firebase ก่อนใช้งานหน้านี้</p>';
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "carbonRecords"), orderBy("co2Total", "asc"));
+                const querySnapshot = await getDocs(q);
+                
+                let total = 0;
+                let count = 0;
+                let belowAverage = 0;
+                const labels = [];
+                const data = [];
+                const leaderboardData = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const record = doc.data();
+                    total += record.co2Total;
+                    count++;
+                    
+                    if (record.belowAverage) belowAverage++;
+                    
+                    const date = new Date(record.timestamp).toLocaleDateString('th-TH');
+                    labels.push(date);
+                    data.push(record.co2Total);
+                    
+                    leaderboardData.push({
+                        name: record.userName,
+                        co2: record.co2Total,
+                        date: date
+                    });
+                });
+                
+                // แสดงสถิติ
+                document.getElementById('totalUsers').textContent = count.toLocaleString();
+                document.getElementById('averageCO2').textContent = count > 0 ? Math.round(total / count).toLocaleString() : '0';
+                document.getElementById('belowAveragePercent').textContent = count > 0 ? ((belowAverage / count) * 100).toFixed(0) + '%' : '0%';
+                
+                // สร้างกราฟ
+                const ctx = document.getElementById('co2Chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'CO₂ (kg/ปี)',
+                            data: data,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+                // แสดง Leaderboard
+                const leaderboardHTML = leaderboardData.slice(0, 10).map((item, index) => `
+                    <div style="display: flex; align-items: center; padding: 1rem; background: #f8f9fa; margin-bottom: 0.5rem; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; width: 40px; font-weight: bold; color: ${index < 3 ? '#f39c12' : '#7f8c8d'};">
+                            ${index + 1}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${item.name}</div>
+                            <div style="font-size: 0.9rem; color: #7f8c8d;">${item.date}</div>
+                        </div>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #2ecc71;">
+                            ${item.co2.toLocaleString()} kg
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('leaderboard').innerHTML = leaderboardHTML;
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+        
+        // Mobile menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+        
+        loadDashboard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="คำนวณคาร์บอนฟุตพริ้นท์ส่วนบุคคล ร่วมลดโลกร้อน">
+    <title>คำนวณคาร์บอนฟุตพริ้นท์ | Carbon Calculator</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-leaf"></i>
+                <span>Carbon Calculator</span>
+            </div>
+            
+            <!-- Hamburger Menu (มือถือ) -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="active">หน้าแรก</a></li>
+                <li><a href="dashboard.html">สถิติ</a></li>
+                <li><a href="#about">เกี่ยวกับ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title animate-fade-in">ร่วมลดโลกร้อน<br>เริ่มต้นที่คาร์บอนฟุตพริ้นท์</h1>
+            <p class="hero-subtitle">คำนวณผลกระทบของคุณต่อสิ่งแวดล้อม และร่วมสร้างโลกที่ยั่งยืน</p>
+            <a href="#calculator" class="btn-primary">
+                <i class="fas fa-calculator"></i> เริ่มคำนวณเลย
+            </a>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section id="calculator" class="calculator-section">
+        <div class="container">
+            <h2 class="section-title">คำนวณคาร์บอนฟุตพริ้นท์ของคุณ</h2>
+            
+            <!-- Category Cards -->
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="card-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>การเดินทาง</h3>
+                    <p>คำนวณ CO₂ จากพาหนะที่ใช้</p>
+                </div>
+
+                <div class="category-card">
+                    <div class="card-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>การใช้ไฟฟ้า</h3>
+                    <p>คำนวณจากค่าไฟรายเดือน</p>
+                </div>
+
+                <div class="category-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h3>การใช้น้ำ</h3>
+                    <p>คำนวณจากปริมาณน้ำ</p>
+                </div>
+
+                <div class="category-card">
+                    <div class="card-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>การบริโภค</h3>
+                    <p>คำนวณจากรูปแบบอาหาร</p>
+                </div>
+            </div>
+
+            <!-- Calculation Form -->
+            <div class="calc-form-container">
+                <form id="carbonForm" class="carbon-form">
+                    <!-- ข้อมูลพื้นฐาน -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> ข้อมูลพื้นฐาน</h3>
+                        <div class="form-group">
+                            <label>ชื่อ-นามสกุล (ไม่บังคับ)</label>
+                            <input type="text" id="userName" placeholder="ใส่ชื่อของคุณ">
+                        </div>
+                    </div>
+
+                    <!-- การเดินทาง -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-car"></i> การเดินทาง</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ประเภทพาหนะ <span class="required">*</span></label>
+                                <select id="vehicleType" required>
+                                    <option value="">-- เลือกพาหนะ --</option>
+                                    <option value="walk">🚶 เดิน/จักรยาน</option>
+                                    <option value="motorcycle">🏍️ มอเตอร์ไซค์</option>
+                                    <option value="car-small">🚗 รถเก๋งเล็ก (Eco car)</option>
+                                    <option value="car-medium">🚙 รถเก๋งกลาง (Sedan)</option>
+                                    <option value="suv">🚙 รถ SUV</option>
+                                    <option value="bus">🚌 รถเมล์/รถตู้</option>
+                                    <option value="bts">🚇 BTS/MRT</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>ระยะทางต่อวัน (กม.) <span class="required">*</span></label>
+                                <input type="number" id="distance" min="0" step="0.1" placeholder="เช่น 20" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- การใช้ไฟฟ้า -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-bolt"></i> การใช้ไฟฟ้า</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ค่าไฟต่อเดือน (บาท) <span class="required">*</span></label>
+                                <input type="number" id="electricBill" min="0" placeholder="เช่น 1500" required>
+                            </div>
+                            <div class="form-group">
+                                <label>จำนวนคนในบ้าน</label>
+                                <input type="number" id="householdSize" min="1" value="1" placeholder="เช่น 4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- การใช้น้ำ -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-tint"></i> การใช้น้ำ</h3>
+                        <div class="form-group">
+                            <label>ค่าน้ำต่อเดือน (บาท)</label>
+                            <input type="number" id="waterBill" min="0" placeholder="เช่น 150">
+                        </div>
+                    </div>
+
+                    <!-- รูปแบบอาหาร -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-utensils"></i> รูปแบบการบริโภค</h3>
+                        <div class="form-group">
+                            <label>ประเภทอาหารที่ทานบ่อย</label>
+                            <select id="dietType">
+                                <option value="vegan">🥗 มังสวิรัติ (Vegan)</option>
+                                <option value="vegetarian">🥬 กินผักเป็นหลัก</option>
+                                <option value="mixed" selected>🍽️ กินทั้งผักและเนื้อ</option>
+                                <option value="meat-heavy">🥩 กินเนื้อสัตว์เป็นหลัก</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-calculate">
+                        <i class="fas fa-calculator"></i> คำนวณเลย
+                    </button>
+                </form>
+
+                <!-- Result Display -->
+                <div id="resultSection" class="result-section hidden">
+                    <div class="result-header">
+                        <h2>📊 ผลการคำนวณ</h2>
+                        <button id="btnReset" class="btn-reset">
+                            <i class="fas fa-redo"></i> คำนวณใหม่
+                        </button>
+                    </div>
+                    
+                    <div class="result-cards">
+                        <div class="result-card primary">
+                            <div class="result-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="result-content">
+                                <p class="result-label">คาร์บอนฟุตพริ้นท์รวม</p>
+                                <h1 class="result-value" id="totalCO2">0</h1>
+                                <p class="result-unit">kg CO₂ ต่อปี</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-content">
+                                <p class="result-label">🚗 การเดินทาง</p>
+                                <h3 class="result-value" id="transportCO2">0</h3>
+                                <p class="result-unit">kg CO₂/ปี</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-content">
+                                <p class="result-label">⚡ ไฟฟ้า</p>
+                                <h3 class="result-value" id="electricCO2">0</h3>
+                                <p class="result-unit">kg CO₂/ปี</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-content">
+                                <p class="result-label">💧 น้ำ</p>
+                                <h3 class="result-value" id="waterCO2">0</h3>
+                                <p class="result-unit">kg CO₂/ปี</p>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <div class="result-content">
+                                <p class="result-label">🍽️ อาหาร</p>
+                                <h3 class="result-value" id="foodCO2">0</h3>
+                                <p class="result-unit">kg CO₂/ปี</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison -->
+                    <div class="comparison-box">
+                        <h3>📈 เปรียบเทียบกับค่าเฉลี่ย</h3>
+                        <div class="comparison-bar">
+                            <div class="comparison-fill" id="comparisonBar"></div>
+                        </div>
+                        <p id="comparisonText" class="comparison-text">คุณปล่อย CO₂ น้อยกว่าค่าเฉลี่ยคนไทย</p>
+                        <p class="info-text">
+                            <i class="fas fa-info-circle"></i>
+                            ค่าเฉลี่ยคนไทย: 3,500 kg CO₂ ต่อปี | 
+                            เทียบเท่าต้นไม้ <span id="treeEquiv">0</span> ต้น
+                        </p>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="recommendations">
+                        <h3><i class="fas fa-lightbulb"></i> คำแนะนำลดคาร์บอน</h3>
+                        <div id="recommendationsList" class="recommendation-list">
+                            <!-- จะ generate ด้วย JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>🌍 คาร์บอนฟุตพริ้นท์คืออะไร?</h2>
+            <p class="about-description">
+                คาร์บอนฟุตพริ้นท์ คือ ปริมาณก๊าซเรือนกระจก (CO₂) ที่ปล่อยออกมาจากกิจกรรมต่างๆ ของเรา 
+                ไม่ว่าจะเป็นการเดินทาง การใช้ไฟฟ้า หรือการบริโภคอาหาร
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🌡️</div>
+                    <h3>3.5 ตัน</h3>
+                    <p>CO₂ เฉลี่ยของคนไทยต่อปี</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌳</div>
+                    <h3>20 ต้น</h3>
+                    <p>ต้นไม้ดูดซับ CO₂ ได้ 1 ตันต่อปี</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <h3>+1.5°C</h3>
+                    <p>อุณหภูมิโลกเพิ่มขึ้นตั้งแต่ปี 1880</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Carbon Calculator | โปรเจคเพื่อการศึกษา</p>
+            <p class="footer-credits">
+                ข้อมูลอ้างอิงจาก: 
+                <a href="https://www.tgo.or.th" target="_blank">องค์การบริหารจัดการก๊าซเรือนกระจก (TGO)</a>, 
+                <a href="https://www.pcd.go.th" target="_blank">กรมควบคุมมลพิษ</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p>กำลังบันทึกข้อมูล...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
